@@ -13,18 +13,33 @@ I might remove Asciidoc entirely soon - it's falling a bit behind alas.
 
 == table
 
-[cols="1,1,1", options="header"]
+Tables are part of why I like asciidoc.  But the JS one does some but not all features - cells spanning rows isn't quite right.  See http://asciidoc.org/userguide.html#_tables for the full set of what the spec allows.
+
+[cols="1,1,3", options="header"]
 |===
 | Email | Person | Notes
 | foo@bar.com
-| foo
+>s| foo
 | just stuff
+
 | dave@smith.com
 | dave
-|
+a| * embedded asciidoc!
+* and code:
+----
+(def code (+ a b))
+----
+
+| spanning rows and cols
+2.2+^.^| not working properly!
+
+columns span, but not rows
+| second row 
 |===
 
-== java
+== source code
+
+Highlighting not working either sadly
 
 [source,java]
 ----

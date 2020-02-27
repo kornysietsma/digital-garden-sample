@@ -5,33 +5,56 @@ date: 2020-01-01
 tags: [website,wiki,meta]
 ---
 
-This is all a bit of a work in progress.
+This is a sample site showing how you could build a [Digital Garden](../garden/) using [GatsbyJs](../gatsby/) - see those pages for more info on what these things are.
 
-## Blog posts vs Wiki pages
+## Why?
 
-At the moment there isn't really a difference - any markdown or asciidoc files
+This started because I've been using a private [Jekyll](https://jekyllrb.com/) site for tracking my personal notes - diary, thoughts, work notes and the rest - for about 18 months, and found it very useful - but it was getting a bit of a mess.
+
+I wanted to be able to search and browse by tags and categories; and I wanted to be able to store more random things.  Old history notes, tech snippets, whatever.
+
+Then I was reading up on Gatsby, and I came across [this sample digital garden](https://github.com/johno/digital-garden) and associated links, and I thought "I could move my diary to gatsby" - so here we are.   (See the [Digital Garden](../garden/) page for more on gardens.) 
+
+## Approaches used and limitations so far
+
+### Blog posts vs Wiki pages
+There is a vague separation between blog/diary entries, and wiki pages, but at the moment there isn't really a difference - any markdown or asciidoc files
 under the `/content/` directory are slurped in and categorised by their "category" and "tags" frontmatter, then ordered by their "date" value.
 
-There are `/content/blog` and `/content/wiki` folders, but at the moment it's just convention, they aren't treated differently
+There are `/content/blog` and `/content/wiki` folders, but at the moment it's just convention, they aren't treated differently, except for how they show up in URLs and relative links.
 
-Page URLs are based on the file path, not the title or anything else.  So you can link between pages using relative links - but I'm looking to improve that later.
+I tend to put datestamps in blog post filenames, purely so I can see them sorted in a text editor and easily find the newest/oldest ones!
 
-I tend to put datestamps in blog post titles, purely so I can see them sorted in a text editor and easily find the newest/oldest ones!
+### URL routes
 
-## Big limitations at the moment
+The nature of gatsby is that everything is really a static html page at it's base.  So to build some browsing state like the "current category" and "current tag" settings, what I actually do is generate a bunch of pages (at build time) that correspond to different states.
+
+Every page has a URL like `/category/tag/pagelocation/` - for this page it's `/-/-/wiki/about/` if you come from the main page.  Those `-` elements mean "you haven't selected a category or tag".
+
+But this page has a category `docs` and a set of tags `website`, `wiki` and `meta`.  If you are browsing just the `docs` category, the URL becomes `/docs/-/wiki/about` [click here to see what that looks like](/docs/-/wiki/about/) - yup, it's exactly the same page, but now the `docs` category is highlighted on the left!
+
+This magic means the current category and tag stay highlighted as you wander around the site, even though it's a static site.  (Yes, you could do this with browser local storage or something, but this way is more normal and doesn't need browser tricks)
+
+How is this done?  The [gatsby-node.js](https://github.com/kornysietsma/digital-garden-sample/blob/master/gatsby-node.js) file is executed _at build time_ and it generates pages for each combination of tag and category needed.  That's a fair bit of duplication - but it's just in the generated html, so it's not all that many bytes.  And nothing has to happen at run-time, so it's real fast!
+
+#### the catch
+
+The one real problem with this - relative links don't always work.  If you are browsing this page at `/docs/website/wiki/about/` then a relative link to `../asciidoc/` won't work, because that page doesn't exist because the asciidoc page isn't tagged with `wiki`.  I need to think about how to fix this - it might need a special link handler :(
+
+### Styling limitations
 
 I've set things up for responsive styling - but I haven't actually implemented anything but a wide-screen style which works on my machine!
 
-Also this is a work in progress, more for getting ideas than actual production use.  I'm mostly using it for my private laptop-only diary and info dump, so it doesn't matter to me if it isn't perfect - but it definitely isn't perfect!
+I plan to fix this - all it needs is some tweaks to [layout.css](https://github.com/kornysietsma/digital-garden-sample/blob/master/src/components/layout.css) to handle more page sizes.  But it's not done yet.
 
 ## Things that work
 
 * Markdown
-* Asciidoc
-* Embedded images
-* Embedded diagrams
+* [Asciidoc](/-/-/wiki/asciidoc/)
+* [Embedded images](/-/-/blog/2020-01-02-images/)
+* [Embedded diagrams](/-/-/blog/2020-01-03-diagrams/)
 * Category and Tag indexes
-* Table of contents for Markdown
+* Table of contents for Markdown - see the right panel!
 
 ## Things that are planned or don't work
 
@@ -39,6 +62,6 @@ Also this is a work in progress, more for getting ideas than actual production u
 * Css for other screen sizes - see above
 * Most things don't work for asciidoc
 * probably going to kill asciidoc - if you have no asciidoc pages, gatsby throws an error!
-* Wiki linking and page linking more cleanly
+* Wiki linking and page linking more cleanly?
 * Distinguish wiki pages from blog pages, both in frontmatter and in the UI (probably show wiki pages matching a q)
 
