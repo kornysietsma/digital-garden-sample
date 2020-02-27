@@ -19,6 +19,7 @@ const IndexPage = () => {
     <Layout pageContext={pageContext}>
       <SEO title="Home" />
       <h1>Welcome to Korny's sample digital garden</h1>
+      <p>See the source for this site at <a href="https://github.com/kornysietsma/digital-garden-sample">https://github.com/kornysietsma/digital-garden-sample</a></p>
       <p>
         <strong>What is a digital garden</strong>, you ask?
       </p>
