@@ -35,7 +35,7 @@ const IndexPage = () => {
         <strong>Tell me more?</strong>
       </p>
       <p>
-        See the <a href="/-/-/wiki/about/">About</a> page for more about how this works, and links to other pages.
+        See the <a href="-/-/wiki/about/">About</a> page for more about how this works, and links to other pages.
       </p>
       </div>
     </Layout>
