@@ -4,6 +4,7 @@ module.exports = {
     description: `This is a sample site only`,
     author: `@kornys`,
   },
+  pathPrefix: "/digital-garden-sample",
   plugins: [
     `gatsby-plugin-react-helmet`,
     {
