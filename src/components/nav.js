@@ -4,7 +4,7 @@ import React from "react"
 import { usePageData } from "../hooks/use-page-data"
 
 function pathFor(category, tag, slug) {
-  return `/${category || "_"}/${tag || "_"}${slug}`
+  return `/${category || "-"}/${tag || "-"}${slug}`
 }
 
 const Nav = ({ pageContext }) => {
@@ -46,7 +46,7 @@ const Nav = ({ pageContext }) => {
       <div>
         <span className="button-group-name">Categories</span>
         <Link
-          key="_"
+          key="-"
           className={
             "button small" + (pageContext.selectedCategory ? "" : " primary")
           }
@@ -71,7 +71,7 @@ const Nav = ({ pageContext }) => {
       <div>
         <span className="button-group-name">Tags</span>
         <Link
-          key="_"
+          key="-"
           className={
             "button small" + (pageContext.selectedTag ? "" : " primary")
           }

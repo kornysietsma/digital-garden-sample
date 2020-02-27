@@ -20,10 +20,10 @@ supported page routes
   /tags/ - show all tags, same as index for now
   /tags/x - show all pages for a tag
   /tags/x/slug - show single page for a tag
-  /tags/_/slug - show single page when no tag was selected (especially for pages with no tags!)
+  /tags/-/slug - show single page when no tag was selected (especially for pages with no tags!)
 
 So for each page we generate a page for every tag!
-If no tags, we might want /tags/_/slug 
+If no tags, we might want /tags/-/slug 
 
   in future add 
   /categories and so on - also means we can show/hide the categories tab
@@ -48,7 +48,7 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
 
 // TODO: move to a shared place and de-dup
 function pathFor(category, tag, slug) {
-  return `/${category || '_'}/${tag || '_'}${slug}`
+  return `/${category || '-'}/${tag || '-'}${slug}`
 }
 
 exports.createPages = async ({ graphql, actions }) => {
