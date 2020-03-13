@@ -4,7 +4,7 @@ import moment from "moment"
 export const normalizeMarkdown = (node) => {
   return {
     id: node.id,
-    kind: "markdown",
+    kind: node.frontmatter.date ? "diary" : "wiki",
     slug: node.fields.slug,
     tags: node.frontmatter.tags,
     category: node.frontmatter.category,
@@ -14,46 +14,11 @@ export const normalizeMarkdown = (node) => {
   }
 }
 
-export const normalizeAsciidoc = (node) => {
-  return {
-    id: node.id,
-    kind: "asciiDoc",
-    slug: node.fields.slug,
-    tags: node.pageAttributes.tags.split(/,\s*/),
-    category: node.pageAttributes.category,
-    title: node.document.title,
-    date: node.pageAttributes.date ? moment(node.pageAttributes.date) : moment(node.parent.birthTime),
-  }
-}
 
 export const usePageData = () => {
-  const { allAsciidoc, allMarkdownRemark } = useStaticQuery(
+  const { allMarkdownRemark } = useStaticQuery(
     graphql`
 query allPages {
-  allAsciidoc {
-    edges {
-      node {
-        fields {
-          slug
-        }
-        pageAttributes {
-          tags
-          category
-          date
-        }
-        document {
-          title
-        }
-        parent {
-          ... on File {
-            id
-            birthTime
-            modifiedTime
-          }
-        }
-      }
-    }
-  }
   allMarkdownRemark {
     edges {
       node {
@@ -80,15 +45,9 @@ query allPages {
   );
 
     // need to normalize the pages
-    const markdownPages = allMarkdownRemark.edges.map(({ node }) => {
+    const allPages = allMarkdownRemark.edges.map(({ node }) => {
       return normalizeMarkdown(node)
-    })
-    const asciidocPages = allAsciidoc.edges.map(({ node }) => {
-      return normalizeAsciidoc(node)
-    })
-
-    const allPages = [...markdownPages, ...asciidocPages].sort((page1, page2) => (page2.date - page1.date));
-    // TODO: sort the pages!
+    }).sort((page1, page2) => (page2.date - page1.date))
 
     const allTags = [...new Set(allPages.flatMap(p => p.tags))].sort();
 

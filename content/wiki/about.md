@@ -1,7 +1,6 @@
 ---
 title: About
 category: docs
-date: 2020-01-01
 tags: [website,wiki,meta]
 ---
 
@@ -13,17 +12,21 @@ This started because I've been using a private [Jekyll](https://jekyllrb.com/) s
 
 I wanted to be able to search and browse by tags and categories; and I wanted to be able to store more random things.  Old history notes, tech snippets, whatever.
 
-Then I was reading up on Gatsby, and I came across [this sample digital garden](https://github.com/johno/digital-garden) and associated links, and I thought "I could move my diary to gatsby" - so here we are.   (See the [Digital Garden](../garden/) page for more on gardens.) 
+Then I was reading up on Gatsby, and I came across [this sample digital garden](https://github.com/johno/digital-garden) and associated links, and I thought "I could move my diary to gatsby" - so here we are.   (See the [Digital Garden](../garden/) page for more on gardens.)
 
 ## Approaches used and limitations so far
 
-### Blog posts vs Wiki pages
-There is a vague separation between blog/diary entries, and wiki pages, but at the moment there isn't really a difference - any markdown or asciidoc files
-under the `/content/` directory are slurped in and categorised by their "category" and "tags" frontmatter, then ordered by their "date" value.
+### Diary pages, Wiki pages and Firehose links
+Conceptually, diary pages are for continual note taking - the sort of thing I dump as I'm working, usually in notebooks.  I'm not really structuring this, beyond every page having a date stamp, a title, a category, and a number of tags.
 
-There are `/content/blog` and `/content/wiki` folders, but at the moment it's just convention, they aren't treated differently, except for how they show up in URLs and relative links.
+Wiki pages are for stuff that is longer lived - not time based.  Things like project overviews, guides to topics, and the rest.  To be honest at the moment 95% of my stuff is dated, but that may change over time.
 
-I tend to put datestamps in blog post filenames, purely so I can see them sorted in a text editor and easily find the newest/oldest ones!
+Firehose is for capturing the mad stream of stuff I _might_ look at, or might not.  
+TODO up to here.
+
+Technically There is a vague separation between blog/diary entries, and wiki pages, but at the moment the only difference is timestamps - if a markdown page in the `/content/` directory has a date in the frontmatter, it's shown as a diary entry and displayed in reverse date order; if not it is shown as a wiki page.  By convention wiki pages are in `/content/wiki` but that's just convention.
+
+### Firehose pages
 
 ### URL routes
 

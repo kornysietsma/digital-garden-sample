@@ -1,12 +1,12 @@
 import React from "react"
 import { graphql, Link } from "gatsby"
 import Layout from "../components/layout"
-import { normalizeMarkdown, normalizeAsciidoc } from "../hooks/use-page-data"
+import { normalizeMarkdown } from "../hooks/use-page-data"
 export default ({ data, pageContext }) => {
-  const post = data.markdownRemark || data.asciidoc
-  const postData = data.markdownRemark ? normalizeMarkdown(data.markdownRemark) : normalizeAsciidoc(data.asciidoc)
+  const post = data.markdownRemark
+  const postData = normalizeMarkdown(data.markdownRemark)
   return (
-    <Layout pageContext={pageContext} metadata={{toc: post.tableOfContents}}>
+    <Layout pageContext={pageContext} metadata={{toc: post.tableOfContents}} navMode='pages' metaMode='pageToc'>
       <div>
         <h1>{postData.title}</h1>
         <h2>{postData.date.format('YYYY-MM-DD')}</h2>
@@ -61,26 +61,5 @@ export const query = graphql`
       html
       tableOfContents(absolute:false)
     }
-    asciidoc(fields: { slug: { eq: $slug } }) {
-      fields {
-        slug
-      }
-      pageAttributes {
-        tags
-        category
-        date
-      }
-      document {
-        title
-      }
-      parent {
-        ... on File {
-          id
-          birthTime
-          modifiedTime
-        }
-      }
-      html
-  }
   }
 `

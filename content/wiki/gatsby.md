@@ -1,7 +1,6 @@
 ---
 title: GatsbyJS
 category: docs
-date: 2020-01-01
 tags: [website,wiki,meta]
 ---
 

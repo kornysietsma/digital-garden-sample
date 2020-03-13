@@ -1,9 +1,8 @@
 import React from "react"
-import Layout from "../components/layout"
-import DiaryPagesList from "../components/diary-pages-list"
+import WikiPagesList from "./wiki-pages-list"
 import { usePageData } from "../hooks/use-page-data"
 
-export default ({ pageContext }) => {
+const MetaWiki = ({ pageContext = {}, metadata = {} }) => {
   const { allPages } = usePageData()
 
   const pages = allPages.filter(page => {
@@ -15,12 +14,13 @@ export default ({ pageContext }) => {
       page.tags.includes(pageContext.selectedTag)
     return categoryMatch && tagMatch
   })
+
   return (
-    <Layout pageContext={pageContext} navMode='pages' metaMode='wiki'>
-      <div>
-        <h2>Diary:</h2>
-        <DiaryPagesList pageContext={pageContext} allPages={pages} ></DiaryPagesList>
-      </div>
-    </Layout>
+    <aside className="main-meta">
+      <h2>Wiki pages:</h2>
+      <WikiPagesList pageContext={pageContext} allPages={pages}></WikiPagesList>
+    </aside>
   )
 }
+
+export default MetaWiki

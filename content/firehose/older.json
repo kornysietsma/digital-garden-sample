@@ -1,0 +1,90 @@
+[
+  {
+    "title": "https://www.devops-research.com/research.html",
+    "date": "2020-02-06",
+    "category": "tech",
+    "tags": ["dora", "devops", "cd"],
+    "lines": ["nice diagram summary of DORA Devops stuff"]
+  },
+  {
+    "title": "https://oleb.net/blog/2016/12/emoji-4-0/ multipoint emoji madness",
+    "date": "2020-02-06",
+    "category": "tech",
+    "tags": ["emoji", "unicode", "text", "coding"],
+    "lines": [""]
+  },
+  {
+    "title": "https://anildash.com/2013/03/28/ten_tips_guaranteed_to_improve_your_startup_success/ sarcastic guide to startups",
+    "date": "2020-02-07",
+    "category": "humour",
+    "tags": ["privilege", "politics"],
+    "lines": [""]
+  },
+  {
+    "title": "Migrating from Lightroom to open source step-by-step",
+    "date": "2020-02-09",
+    "category": "play",
+    "tags": ["lightroom", "photos"],
+    "lines": [
+      "https://mathiashueber.com/migrate-from-lightroom-to-open-source-alternative/"
+    ]
+  },
+  {
+    "title": "https://www.ramblers.org.uk/dontloseyourway ramblers don't lose your way map",
+    "date": "2020-02-11",
+    "category": "play",
+    "tags": ["walking", "recreation", "ramblers", "maps"],
+    "lines": [""]
+  },
+  {
+    "title": "https://isa-principles.org/ is-a principles like 12 factor",
+    "date": "2020-02-13",
+    "category": "tech",
+    "tags": ["12factor", "architecture", "code"],
+    "lines": [
+      "See https://twitter.com/JoergM/status/1227837202501165057?s=09 for source (pcalcado)"
+    ]
+  },
+  {
+    "title": "https://www.bbc.com/future/article/20200211-why-the-vegan-diet-is-not-always-green",
+    "date": "2020-02-13",
+    "category": "world",
+    "tags": ["vegan", "world", "climate", "green"],
+    "lines": [""]
+  },
+  {
+    "title": "https://thecorrespondent.com/283/poverty-isnt-a-lack-of-character-its-a-lack-of-cash/37442933638-a4773584",
+    "date": "2020-02-14",
+    "category": "world",
+    "tags": ["politics", "poverty", "economics"],
+    "lines": [""]
+  },
+  {
+    "title": "https://blog.ionelmc.ro/2014/12/28/terrible-choices-mysql/ MySQL is a terrible choice",
+    "date": "2020-02-14",
+    "category": "tech",
+    "tags": ["mysql"],
+    "lines": [""]
+  },
+  {
+    "title": "https://www.sandimetz.com/blog/2016/1/20/the-wrong-abstraction duplication vs having the wrong abstraction",
+    "date": "2020-02-19",
+    "category": "tech",
+    "tags": ["tech", "code", "architecture"],
+    "lines": [""]
+  },
+  {
+    "title": "https://clearbit.com/blog/gross-company-happiness/",
+    "date": "2020-02-23",
+    "category": "thinking",
+    "tags": ["work", "business"],
+    "lines": [""]
+  },
+  {
+    "title": "https://twitter.com/SplitSoftware/status/1232382190954196993?s=09 Continual Delivery in the Wild",
+    "date": "2020-02-25",
+    "category": "tech",
+    "tags": ["books", "tech", "CD"],
+    "lines": [""]
+  }
+]

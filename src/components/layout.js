@@ -12,9 +12,12 @@ import "./layout.css"
 
 import Header from "./header"
 import Nav from "./nav"
-import Meta from "./meta"
+import FirehoseNav from "./firehose-nav"
+import MetaPageToc from "./meta-page-toc"
+import MetaWiki from "./meta-wiki"
+import MetaFirehose from "./meta-firehose"
 
-const Layout = ({ children, pageContext, metadata }) => {
+const Layout = ({ children, pageContext, metadata, navMode, metaMode }) => {
   const data = useStaticQuery(graphql`
     query SiteTitleQuery {
       site {
@@ -25,12 +28,49 @@ const Layout = ({ children, pageContext, metadata }) => {
     }
   `)
 
+  const modeBasedNav = navMode => {
+    switch (navMode) {
+      case "pages": {
+        return <Nav pageContext={pageContext} />
+      }
+      case "firehose": {
+        return <FirehoseNav pageContext={pageContext} />
+      }
+      default:
+        return (
+          <aside className="main-nav">
+            <p>Bad mode: {navMode}</p>
+          </aside>
+        )
+    }
+  }
+
+  const modeBasedMeta = metaMode => {
+    switch (metaMode) {
+      case "firehose": {
+        return <MetaFirehose pageContext={pageContext} ></MetaFirehose>
+      }
+      case "pageToc": {
+        return <MetaPageToc pageContext={pageContext} metadata={metadata} ></MetaPageToc>
+      }
+      case "wiki": {
+        return <MetaWiki pageContext={pageContext} ></MetaWiki>
+      }
+      default:
+        return (
+          <aside className="main-nav">
+            <p>Bad mode: {navMode}</p>
+          </aside>
+        )
+          }
+  }
+
   return (
     <div className="main-grid">
       <Header siteTitle={data.site.siteMetadata.title} />
-      <Nav pageContext={pageContext} />
+      {modeBasedNav(navMode)}
       <main className="main-content">{children}</main>
-      <Meta pageContext={pageContext} metadata={metadata}/>
+      {modeBasedMeta(metaMode)}
       <footer className="main-footer">
         © {new Date().getFullYear()}, Built with
         {` `}

@@ -2,22 +2,18 @@ import { Link } from "gatsby"
 import React from "react"
 
 import { usePageData } from "../hooks/use-page-data"
-
-function pathFor(category, tag, slug) {
-  return `/${category || "-"}/${tag || "-"}${slug}`
-}
+import PageCategoryButton from "./page-category-button"
+import PageTagButton from "./page-tag-button"
+import WikiPagesList from "./wiki-pages-list"
+import DiaryPagesList from "./diary-pages-list"
 
 const Nav = ({ pageContext }) => {
   const {
-    allCategories,
-    allTags,
     allPages,
     categoryCounts,
     categoryTagCounts,
     tagCounts,
   } = usePageData()
-
-  // TODO: show selected tag/category somehow
 
   const pages = allPages.filter(page => {
     const categoryMatch =
@@ -28,6 +24,7 @@ const Nav = ({ pageContext }) => {
       page.tags.includes(pageContext.selectedTag)
     return categoryMatch && tagMatch
   })
+
 
   const currentTags = pageContext.selectedCategory
     ? categoryTagCounts.get(pageContext.selectedCategory)
@@ -44,80 +41,43 @@ const Nav = ({ pageContext }) => {
   return (
     <aside className="main-nav">
       <div>
+        <h4>
+          Pages: &nbsp;
+          <Link to="/firehose/-/-">(switch to Firehose)</Link>
+        </h4>
+      </div>
+      <div>
         <span className="button-group-name">Categories</span>
-        <Link
-          key="-"
-          className={
-            "button small" + (pageContext.selectedCategory ? "" : " primary")
-          }
-          to={`/`}
-        >
-          all
-        </Link>
+        <PageCategoryButton
+          selectedCategory={pageContext.selectedCategory}
+        ></PageCategoryButton>
         {categoriesSorted.map(([category, count]) => (
-          <Link
-            key={category}
-            title={`${count} pages`}
-            className={
-              "button small" +
-              (pageContext.selectedCategory === category ? " primary" : "")
-            }
-            to={`/category/${category}`}
-          >
-            {category}
-          </Link>
+          <PageCategoryButton
+            category={category}
+            count={count}
+            selectedCategory={pageContext.selectedCategory}
+          ></PageCategoryButton>
         ))}
       </div>
       <div>
         <span className="button-group-name">Tags</span>
-        <Link
-          key="-"
-          className={
-            "button small" + (pageContext.selectedTag ? "" : " primary")
-          }
-          to={
-            pageContext.selectedCategory
-              ? `/category/${pageContext.selectedCategory}`
-              : `/`
-          }
-        >
-          all
-        </Link>
+        <PageTagButton
+          selectedCategory={pageContext.selectedCategory}
+          selectedTag={pageContext.selectedTag}
+        ></PageTagButton>
         {currentTagsSorted.map(([tag, count]) => (
-          <Link
-            key={tag}
-            title={`${count} pages`}
-            className={
-              "button small" +
-              (pageContext.selectedTag === tag ? " primary" : "")
-            }
-            to={
-              pageContext.selectedCategory
-                ? `/category/${pageContext.selectedCategory}/tag/${tag}`
-                : `/tag/${tag}`
-            }
-          >
-            {tag}
-          </Link>
+          <PageTagButton
+            tag={tag}
+            selectedCategory={pageContext.selectedCategory}
+            selectedTag={pageContext.selectedTag}
+          ></PageTagButton>
         ))}
       </div>
       <div>
         <hr />
-        {pages.map(page => (
-          <div key={page.id}>
-            <Link
-              to={pathFor(
-                pageContext.selectedCategory,
-                pageContext.selectedTag,
-                page.slug
-              )}
-            >
-              <h3>
-                {page.title} <span>— {page.date.format('YYYY-MM-DD')}</span>
-              </h3>
-            </Link>
-          </div>
-        ))}
+        <WikiPagesList pageContext={pageContext} allPages={pages} ></WikiPagesList>
+        <hr />
+        <DiaryPagesList pageContext={pageContext} allPages={pages}></DiaryPagesList>
       </div>
     </aside>
   )

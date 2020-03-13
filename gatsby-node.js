@@ -4,11 +4,11 @@
  * See: https://www.gatsbyjs.org/docs/node-apis/
  */
 const { createFilePath } = require(`gatsby-source-filesystem`)
-const moment = require('moment')
+const moment = require("moment")
 const path = require(`path`)
 
 /* 
-Scan all markdown and asciidoc files and build pages for them + metadata
+Scan all markdown files and build pages for them + metadata
 
 Note that best practices appear to be to do minimal queries here - just get the IDs,
 then let the individual pages query for the rest.
@@ -23,7 +23,7 @@ supported page routes
   /tags/-/slug - show single page when no tag was selected (especially for pages with no tags!)
 
 So for each page we generate a page for every tag!
-If no tags, we might want /tags/-/slug 
+If no tags, we might want /tags/_/slug 
 
   in future add 
   /categories and so on - also means we can show/hide the categories tab
@@ -36,7 +36,7 @@ If no tags, we might want /tags/-/slug
 
 exports.onCreateNode = ({ node, getNode, actions }) => {
   const { createNodeField } = actions
-  if (node.internal.type === `MarkdownRemark` | node.internal.type === `Asciidoc`) {
+  if (node.internal.type === `MarkdownRemark`) {
     const slug = createFilePath({ node, getNode, basePath: `pages` })
     createNodeField({
       node,
@@ -46,39 +46,18 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
   }
 }
 
-// TODO: move to a shared place and de-dup
 function pathFor(category, tag, slug) {
-  return `/${category || '-'}/${tag || '-'}${slug}`
+  return `/${category || "-"}/${tag || "-"}${slug}`
+}
+
+function firehosePathFor(category, tag) {
+  return `/firehose/${category || "-"}/${tag || "-"}`
 }
 
 exports.createPages = async ({ graphql, actions }) => {
-    const { createPage } = actions
-    const allData = await graphql(`
-    query MyQuery {
-      allAsciidoc {
-        edges {
-          node {
-            fields {
-              slug
-            }
-            pageAttributes {
-              tags
-              category
-              date
-            }
-            document {
-              title
-            }
-            parent {
-              ... on File {
-                id
-                birthTime
-                modifiedTime
-              }
-            }
-          }
-        }
-      }
+  const { createPage } = actions
+  const allData = await graphql(`
+    query DataQuery {
       allMarkdownRemark {
         edges {
           node {
@@ -100,115 +79,188 @@ exports.createPages = async ({ graphql, actions }) => {
           }
         }
       }
-    }    
-    `);
+    }
+  `)
 
-    // need to normalize the pages
-    const markdownPages = allData.data.allMarkdownRemark.edges.map(({node}) => {
-      return {
-      kind: 'markdown',
+  const allFirehose = await graphql(`
+    query FirehoseQuery {
+      allFirehose {
+        edges {
+          node {
+            category
+            tags
+          }
+        }
+      }
+    }
+  `)
+
+  // need to normalize the pages
+  const allPages = allData.data.allMarkdownRemark.edges.map(({ node }) => {
+    return {
+      kind: "markdown",
       slug: node.fields.slug,
       title: node.frontmatter.title,
       tags: node.frontmatter.tags,
       category: node.frontmatter.category,
-      date: node.frontmatter.date ? moment(node.frontmatter.date) : moment(node.parent.birthTime),
-    }});
-    const asciidocPages = allData.data.allAsciidoc.edges.map(({node}) => {
+      date: node.frontmatter.date
+        ? moment(node.frontmatter.date)
+        : moment(node.parent.birthTime),
+    }
+  })
+
+  const allFirehoseEntries = allFirehose.data.allFirehose.edges.map(
+    ({ node }) => {
       return {
-      kind: 'asciiDoc',
-      slug: node.fields.slug,
-      title: node.document.title,
-      tags: node.pageAttributes.tags.split(/,\s*/),
-      category: node.pageAttributes.category,
-      date: node.pageAttributes.date ? moment(node.pageAttributes.date) : moment(node.parent.birthTime),
-    }});
+        tags: node.tags,
+        category: node.category,
+      }
+    }
+  )
 
-    const allPages = [...markdownPages, ...asciidocPages]
-    // TODO: sort the pages!
+  const allTagsEverywhere = [...allPages.flatMap(p => p.tags)]
 
-    const allTags = [... new Set(allPages.flatMap(p => p.tags))].sort();
+  const allTags = [...new Set(allTagsEverywhere)].sort()
 
-    const allCategories = [...new Set(allPages.flatMap(p => p.category))].sort();  
+  const allCategoriesEverywhere = [...allPages.flatMap(p => p.category)]
 
-    // tag indexes
-    allTags.forEach((tag) => {
+  const allCategories = [...new Set(allCategoriesEverywhere)].sort()
+
+  // tag indexes
+  allTags.forEach(tag => {
+    createPage({
+      path: `/tag/${tag}`,
+      component: path.resolve(`./src/templates/index-page.js`),
+      context: {
+        selectedTag: tag,
+        selectedCategory: null,
+      },
+    })
+  })
+  allCategories.forEach(category => {
+    createPage({
+      path: `/category/${category}`,
+      component: path.resolve(`./src/templates/index-page.js`),
+      context: {
+        selectedTag: null,
+        selectedCategory: category,
+      },
+    })
+    allTags.forEach(tag => {
       createPage({
-        path: `/tag/${tag}`,
+        path: `/category/${category}/tag/${tag}`,
         component: path.resolve(`./src/templates/index-page.js`),
         context: {
           selectedTag: tag,
-          selectedCategory: null,
-        }
-      })
-    });
-    allCategories.forEach((category) => {
-      createPage({
-        path: `/category/${category}`,
-        component: path.resolve(`./src/templates/index-page.js`),
-        context: {
-          selectedTag: null,
           selectedCategory: category,
-        }
-      })
-      allTags.forEach((tag) => {
-        createPage({
-          path: `/category/${category}/tag/${tag}`,
-          component: path.resolve(`./src/templates/index-page.js`),
-          context: {
-            selectedTag: tag,
-            selectedCategory: category,
-          }
-        })
-      });
-    });
-
-    // page selection
-    [...markdownPages, ...asciidocPages].forEach((page) => {
-      // page with no selection
-      createPage({
-        path: pathFor(null, null, page.slug),
-        component: path.resolve(`./src/templates/page.js`),
-        context: {
-          ...page,
-          selectedTag: null,
-          selectedCategory: null,
-        }
-      })
-      // page with tag selected
-      page.tags.forEach((tag) => {
-        createPage({
-          path: pathFor(null, tag, page.slug),
-          component: path.resolve(`./src/templates/page.js`),
-          context: {
-            ...page,
-            selectedTag: tag,
-            selectedCategory: null,
-          }
-        })
-      })
-      // page with category selected
-      createPage({
-        path: pathFor(page.category, null, page.slug),
-        component: path.resolve(`./src/templates/page.js`),
-        context: {
-          ...page,
-          selectedTag: null,
-          selectedCategory: page.category,
-        }
-      })
-
-      // page with category and tag
-      page.tags.forEach((tag) => {
-        createPage({
-          path: pathFor(page.category, tag, page.slug),
-          component: path.resolve(`./src/templates/page.js`),
-          context: {
-            ...page,
-            selectedTag: tag,
-            selectedCategory: page.category,
-          }
-        })  
+        },
       })
     })
-  }
-  
+  })
+
+  // page selection
+  allPages.forEach(page => {
+    // page with no selection
+    createPage({
+      path: pathFor(null, null, page.slug),
+      component: path.resolve(`./src/templates/page.js`),
+      context: {
+        ...page,
+        selectedTag: null,
+        selectedCategory: null,
+      },
+    })
+    // page with tag selected
+    page.tags.forEach(tag => {
+      createPage({
+        path: pathFor(null, tag, page.slug),
+        component: path.resolve(`./src/templates/page.js`),
+        context: {
+          ...page,
+          selectedTag: tag,
+          selectedCategory: null,
+        },
+      })
+    })
+    // page with category selected
+    createPage({
+      path: pathFor(page.category, null, page.slug),
+      component: path.resolve(`./src/templates/page.js`),
+      context: {
+        ...page,
+        selectedTag: null,
+        selectedCategory: page.category,
+      },
+    })
+
+    // page with category and tag
+    page.tags.forEach(tag => {
+      createPage({
+        path: pathFor(page.category, tag, page.slug),
+        component: path.resolve(`./src/templates/page.js`),
+        context: {
+          ...page,
+          selectedTag: tag,
+          selectedCategory: page.category,
+        },
+      })
+    })
+  })
+
+  // for the firehose indexes want 4 kinds of page:
+  // /firehose/-/- for all
+  // /firehose/cat/- for category
+  // /firehose/-/tag for tag
+  // /firehose/cat/tag for both
+
+  // the all case is easy
+  createPage({
+    path: firehosePathFor(null, null),
+    component: path.resolve(`./src/templates/firehose-all.js`),
+    context: {
+      selectedTag: null,
+      selectedCategory: null,
+    },
+  })
+
+  const allFirehoseTags = [...allFirehoseEntries.flatMap(p => p.tags)]
+  const uniqueFirehoseTags = [...new Set(allFirehoseTags)].sort()
+  uniqueFirehoseTags.forEach(tag => {
+    createPage({
+      path: firehosePathFor(null, tag),
+      component: path.resolve(`./src/templates/firehose-tag.js`),
+      context: {
+        selectedTag: tag,
+        selectedCategory: null,
+      },
+    })
+  })
+  const allFirehoseCategories = [...allFirehoseEntries.flatMap(p => p.category)]
+  const uniqueFirehoseCategories = [...new Set(allFirehoseCategories)].sort()
+  uniqueFirehoseCategories.forEach(category => {
+    createPage({
+      path: firehosePathFor(category, null),
+      component: path.resolve(`./src/templates/firehose-category.js`),
+      context: {
+        selectedTag: null,
+        selectedCategory: category,
+      },
+    })
+    const subTags = [
+      ...allFirehoseEntries
+        .filter(p => p.category === category)
+        .flatMap(p => p.tags),
+    ]
+    const uniqueTags = [...new Set(subTags)].sort()
+    uniqueTags.forEach(tag => {
+      createPage({
+        path: firehosePathFor(category, tag),
+        component: path.resolve(`./src/templates/firehose-category-tag.js`),
+        context: {
+          selectedTag: tag,
+          selectedCategory: category,
+        },
+      })
+    })
+  })
+}

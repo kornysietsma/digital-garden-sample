@@ -70,12 +70,9 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-transformer-asciidoc`,
+      resolve: `gatsby-transformer-json`,
       options: {
-        attributes: {
-          showtitle: false,
-          doctype: 'book',
-        },
+        typeName: `firehose`, // a fixed string
       },
     },
   ],
