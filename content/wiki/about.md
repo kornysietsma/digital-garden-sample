@@ -61,6 +61,7 @@ I plan to fix this - all it needs is some tweaks to [layout.css](https://github.
 
 ## Things that are planned or don't work
 
+* [Asciidoc](/-/-/wiki/asciidoc/) - I had this, but it just complicted scripts and most plugins didn't work, so I've removed it.  If you need it, it's in [git history](https://github.com/kornysietsma/digital-garden-sample/tree/07c3664fcf2c1c1cebb830dbf740e4289d287457)
 * Moar documentation needed!
 * Css for other screen sizes - see above
 * Most things don't work for asciidoc
