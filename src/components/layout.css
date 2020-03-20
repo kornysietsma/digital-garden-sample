@@ -24,46 +24,98 @@ If there isn't 960px just make everything narrower.
 
 */
 
-.main-header { grid-area: header; }
-.main-nav { grid-area: nav; }
-.main-content { grid-area: content; }
-.main-meta { grid-area: meta; }
-.main-footer { grid-area: footer; }
-
-.main-grid {
-    display: grid;
-    grid-template-areas: "header header header"
-                         "nav content meta"
-                         "footer footer footer";
-    grid-template-columns: 1fr 960px 1fr;
-    grid-template-rows: 4rem
-                        auto 
-                        2rem;
-    min-height: 100vh;
-    justify-content: center;
+.main-header {
+  grid-area: header;
+}
+.main-nav {
+  grid-area: nav;
+}
+.main-content {
+  grid-area: content;
+}
+.main-meta {
+  grid-area: meta;
+}
+.main-footer {
+  grid-area: footer;
 }
 
-/* todo - other grids for narrower media */
+/* mobile / small screen default */
+.main-grid {
+  display: grid;
+  grid-template-areas:
+    "header"
+    "content"
+    "nav"
+    "meta"
+    "footer";
+  grid-template-columns: auto;
+  grid-template-rows:
+    4rem
+    auto
+    auto
+    auto
+    2rem;
+  min-height: 100vh;
+  justify-content: center;
+}
+
+/* Big screens */
+@media only screen and (min-width: 1280px) {
+  .main-grid {
+    display: grid;
+    grid-template-areas:
+      "header header header"
+      "nav content meta"
+      "footer footer footer";
+    grid-template-columns: 1fr 960px 1fr;
+    grid-template-rows:
+      4rem
+      auto
+      2rem;
+    min-height: 100vh;
+    justify-content: center;
+  }
+}
+
+/* medium screens */
+@media only screen and (min-width: 1024px) and (max-width: 1279px) {
+  .main-grid {
+    display: grid;
+    grid-template-areas:
+      "header header header"
+      "nav content meta"
+      "footer footer footer";
+    grid-template-columns: 1fr 640px 1fr;
+    grid-template-rows:
+      4rem
+      auto
+      2rem;
+    min-height: 100vh;
+    justify-content: center;
+  }
+}
 
 /* stylin' */
 
 .button-group-name {
-    font-size: 1.25rem;
+  font-size: 1.25rem;
 }
 
 .nav-buttons > span {
-    display: inline-block;
-    background: var(--button-back-color);
-    color: var(--button-fore-color);
-    border: .0625rem solid var(--button-border-color);
-    border-radius: var(--universal-border-radius);
-    padding:calc(0.5 * var(--universal-padding)) calc(0.75 * var(--universal-padding));
-    margin:var(--universal-margin);
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.3s;
+  display: inline-block;
+  background: var(--button-back-color);
+  color: var(--button-fore-color);
+  border: 0.0625rem solid var(--button-border-color);
+  border-radius: var(--universal-border-radius);
+  padding: calc(0.5 * var(--universal-padding))
+    calc(0.75 * var(--universal-padding));
+  margin: var(--universal-margin);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
 .nav-buttons > span.selected {
-    background: #0277bd;
+  background: #0277bd;
 }
